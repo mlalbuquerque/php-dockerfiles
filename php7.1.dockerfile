@@ -1,4 +1,4 @@
-ARG PHP_VERSION="7.1.12-fpm-alpine"
+ARG PHP_VERSION="7.1.17-fpm-alpine"
 FROM php:${PHP_VERSION}
 ARG UID=root
 ARG GID=root

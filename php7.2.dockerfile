@@ -1,9 +1,9 @@
-ARG PHP_VERSION="7.2.0-fpm-alpine"
+ARG PHP_VERSION="7.2.5-fpm-alpine"
 FROM php:${PHP_VERSION}
 ARG UID=root
 ARG GID=root
 ARG USER
-ARG XDEBUG_VERSION=2.6.0alpha1
+ARG XDEBUG_VERSION=2.6.0
 
 # Instalando extensões necessárias do PHP
 RUN apk add --update --no-cache \
@@ -15,7 +15,7 @@ RUN docker-php-ext-configure ldap --with-ldap=/usr
 RUN docker-php-ext-configure xml --with-libxml-dir=/usr
 RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include --with-png-dir=/usr/include
 RUN docker-php-ext-install \
-    bcmath calendar curl dom fileinfo gd hash json ldap mbstring mcrypt \
+    bcmath calendar curl dom fileinfo gd hash json ldap mbstring \
     mysqli pgsql pdo pdo_dblib pdo_mysql pdo_pgsql sockets xml xsl zip
 
 # Instalando o XDebug
