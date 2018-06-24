@@ -1,11 +1,11 @@
-ARG PHP_VERSION="7.1.18-fpm-alpine"
+ARG PHP_VERSION="7.2.6-fpm-alpine"
 FROM php:${PHP_VERSION}
 ARG UID=root
 ARG GID=root
 ARG USER
-ARG XDEBUG_VERSION=2.5.5
+ARG XDEBUG_VERSION=2.6.0
 
-# Instalando extensões necessárias do PHP
+# Installing needed extensions
 RUN apk add --update --no-cache \
         alpine-sdk autoconf curl curl-dev freetds-dev \
         libxml2-dev jpeg-dev openldap-dev libmcrypt-dev \
@@ -15,36 +15,42 @@ RUN docker-php-ext-configure ldap --with-ldap=/usr
 RUN docker-php-ext-configure xml --with-libxml-dir=/usr
 RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include --with-png-dir=/usr/include
 RUN docker-php-ext-install \
-    bcmath calendar curl dom fileinfo gd hash json ldap mbstring mcrypt \
+    bcmath calendar curl dom fileinfo gd hash json ldap mbstring \
     mysqli pgsql pdo pdo_dblib pdo_mysql pdo_pgsql sockets xml xsl zip
 
-# Instalando o XDebug
+# Installing XDebug
 RUN pecl install xdebug-${XDEBUG_VERSION}
 RUN docker-php-ext-enable xdebug
 
-# Configurando o XDebug
+# Configuring XDebug
 RUN echo "xdebug.remote_enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.remote_autostart = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.connect_back = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
-# Instalando o Git (Composer usa para baixar alguns pacotes)
+# Installing Git (Composer uses it - so can you, if you don't want to install on the host)
 RUN apk add --update --no-cache git && rm /var/cache/apk/*
 
-# Instalando o Composer
+# Installing Composer
 RUN php -r "copy('http://getcomposer.org/installer', 'composer-setup.php');"
 RUN php composer-setup.php
 RUN php -r "unlink('composer-setup.php');"
 RUN mv composer.phar /usr/local/bin/composer
+ENV PATH "${PATH}:/root/.composer/vendor/bin"
 
-# Setando o user:group do conteiner para o user:group da máquina host (ver arquivo .env e docker-compose.yml)
-# Assim, o Composer passa a usar o mesmo user:group do usuário do host
-# Configura também as pastas para o novo usuário
+# Installing Tools (PHPUnit, Code Sniffer, PHP MD, PHP Stan)
+RUN composer global require phpunit/phpunit ^7 
+RUN composer global require squizlabs/php_codesniffer
+RUN composer global require phpmd/phpmd
+RUN composer global require phpstan/phpstan
+# Try one of these for Documentation:
+# phpDocumentor - https://www.phpdoc.org/
+# phpDox - http://phpdox.de/
+# Docblox - https://github.com/dzuelke/Docblox
+# ApiGen - https://github.com/ApiGen/ApiGen
+
+# Setting conteiner's user:group same as host's user:group (see .env file and docker-composer.yml)
+# So, Composer uses the host's user's user:group
+# Also configure the user's folders
 RUN chown -R ${UID}:${GID} /var/www/html
 RUN chown -R ${UID}:${GID} /root/.composer
-RUN mkdir -p /.composer && chown -R ${UID}:${GID} /.composer
-RUN mkdir -p /.config && chown -R ${UID}:${GID} /.config
-VOLUME /var/www/html
-VOLUME /root/.composer
-VOLUME /.composer
-VOLUME /.config
 USER ${UID}
