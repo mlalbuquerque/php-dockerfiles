@@ -47,10 +47,3 @@ RUN composer global require phpstan/phpstan
 # phpDox - http://phpdox.de/
 # Docblox - https://github.com/dzuelke/Docblox
 # ApiGen - https://github.com/ApiGen/ApiGen
-
-# Setting conteiner's user:group same as host's user:group (see .env file and docker-composer.yml)
-# So, Composer uses the host's user's user:group
-# Also configure the user's folders
-RUN chown -R ${UID}:${GID} /var/www/html
-RUN chown -R ${UID}:${GID} /root/.composer
-USER ${UID}
