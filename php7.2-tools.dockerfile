@@ -42,7 +42,7 @@ RUN composer global require phpunit/phpunit ^7
 RUN composer global require squizlabs/php_codesniffer
 RUN composer global require phpmd/phpmd
 RUN composer global require phpstan/phpstan
-# Try one of these for Documentation:
+# Try one of these for PHP Documentation Generation:
 # phpDocumentor - https://www.phpdoc.org/
 # phpDox - http://phpdox.de/
 # Docblox - https://github.com/dzuelke/Docblox
