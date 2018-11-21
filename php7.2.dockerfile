@@ -9,8 +9,7 @@ ARG XDEBUG_VERSION=2.6.1
 RUN apk add --update --no-cache \
         alpine-sdk autoconf curl curl-dev freetds-dev \
         libxml2-dev jpeg-dev openldap-dev libmcrypt-dev \
-        libpng-dev libxslt-dev postgresql-dev \
-    && rm /var/cache/apk/*
+        libpng-dev libxslt-dev postgresql-dev
 RUN docker-php-ext-configure ldap --with-ldap=/usr
 RUN docker-php-ext-configure xml --with-libxml-dir=/usr
 RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include --with-png-dir=/usr/include
@@ -28,7 +27,7 @@ RUN echo "xdebug.remote_autostart = 1" >> /usr/local/etc/php/conf.d/docker-php-e
 RUN echo "xdebug.connect_back = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 # Instalando o Git (Composer usa para baixar alguns pacotes)
-RUN apk add --update --no-cache git && rm /var/cache/apk/*
+RUN apk add --update --no-cache git
 
 # Instalando o Composer
 RUN php -r "copy('http://getcomposer.org/installer', 'composer-setup.php');"
