@@ -1,9 +1,9 @@
-ARG PHP_VERSION="7.2.6-fpm-alpine"
+ARG PHP_VERSION="7.2.12-fpm-alpine"
 FROM php:${PHP_VERSION}
 ARG UID=root
 ARG GID=root
 ARG USER
-ARG XDEBUG_VERSION=2.6.0
+ARG XDEBUG_VERSION=2.6.1
 
 # Installing needed extensions
 RUN apk add --update --no-cache \
